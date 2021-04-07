@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border: 1px solid #d3d3d3;
+    background-image: url("tappeto.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+</style>
+</head>
+<body onload="startGame()">
+    
+    <img src="car.png" id="car" width="20" height="32">
+    
+
+<script>
+var myGamePiece;
+
+
+
+function startGame() {
+    myGamePiece = new component(20, 30, "red", 100, 100);
+    myGameArea.start();
+}
+
+var myGameArea = { // 
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 480;
+        this.canvas.height = 270;
+        this.context = this.canvas.getContext("2d");
+        console.log(document.body.childNodes[0]);
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 20);
+        window.addEventListener('keydown', function (e) { // ascoltatore keydown
+            e.preventDefault();
+            myGameArea.keys = (myGameArea.keys || []); // ???
+            myGameArea.keys[e.keyCode] = (e.type == "keydown"); // da un valore booleano a myGameArea.keys[e.keycode]
+        })
+        window.addEventListener('keyup', function (e) {
+            myGameArea.keys[e.keyCode] = (e.type == "keydown");
+        })
+    },
+    stop : function() {
+        clearInterval(this.interval);
+    },    
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+
+function component(width, height, color, x, y, type) {//largheza altezza colore posx posy type
+    
+
+    console.log(car);
+    
+    
+
+    this.type = type; // ???
+    this.width = width;
+    this.height = height;
+    this.speed = 0; // speed 
+    this.angle = 0; // angle 
+    this.moveAngle = 0; // virata
+    this.x = x;
+    this.y = y;    
+    this.update = function() {
+        ctx = myGameArea.context;
+        ctx.save();
+        ctx.translate(this.x/2, this.y/2);
+        console.log(this.x,this.y);
+        ctx.rotate(this.angle);
+        var img = document.createElement("img");
+
+        
+     
+        img.src="car.png";
+        img.width="25";
+        img.height="16";
+        ctx.drawImage(img,0,0,30,50);
+        console.log(img);
+        
+        //var pat = ctx.createPattern(img,'no-repeat');
+        
+        //ctx.fillStyle = pat;
+
+        //ctx.fillStyle = color;
+        //ctx.fillRect(this.width / -2 , this.height / -2, this.width, this.height);//area 
+        ctx.restore(); //   
+    }
+    this.newPos = function() {
+        this.angle += this.moveAngle * Math.PI / 180; // Math.PI / 180 sarebbe 1 grado quindi 
+        this.x += this.speed * Math.sin(this.angle); // scompone this.speed nella componente x 
+        this.y -= this.speed * Math.cos(this.angle); // scompone this.speed nella componete y 
+    }
+}
+
+function updateGameArea() {
+    myGameArea.clear(); 
+    myGamePiece.moveAngle = 0;
+    myGamePiece.speed = 0;
+    if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.moveAngle = -1; } // tasto sinistra
+    if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.moveAngle = 1; } // tato destra
+    if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speed= 1; } // tasto avanti 
+    if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speed= -1; } // tasto indietro
+    myGamePiece.newPos(); 
+    myGamePiece.update();
+}
+</script>
+
+
+
+</body>
+</html>
